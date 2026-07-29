@@ -1,6 +1,6 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ProjectCultivation", "ProjectCultivation\ProjectCultivation.csproj", "{7277F276-C885-4442-A8BB-51DC94291D06}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SectEngine", "SectEngine\SectEngine.csproj", "{7277F276-C885-4442-A8BB-51DC94291D06}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
