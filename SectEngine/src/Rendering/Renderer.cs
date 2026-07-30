@@ -7,6 +7,8 @@ namespace SectEngine.Rendering;
 public class Renderer : IDisposable
 {
     private readonly GL _gl;
+    private Buffering _buffering;
+    private Shader _shader;
 
     public Renderer(IWindow window)
     {
@@ -18,6 +20,13 @@ public class Renderer : IDisposable
         _gl.Enable(EnableCap.DepthTest);
         _gl.Enable(EnableCap.Blend);
         _gl.BlendFunc(BlendingFactor.SrcAlpha, BlendingFactor.OneMinusSrcAlpha);
+        //Shader init
+        _shader = new Shader(_gl);
+        _shader.ProcessShader();
+        
+        //buffering init
+        _buffering = new Buffering(_gl);
+        _buffering.Process();
     }
 
     public void SetViewport(int x, int y, int width, int height)
@@ -30,6 +39,14 @@ public class Renderer : IDisposable
         _gl.Clear(ClearBufferMask.ColorBufferBit | ClearBufferMask.DepthBufferBit);
     }
 
+    public unsafe void Draw()
+    {
+        _buffering.Bind();
+        _shader.Use();
+        
+        _gl.DrawElements(PrimitiveType.Triangles, (uint)_buffering.indices.Length, DrawElementsType.UnsignedInt, (void*)0);
+    }
+
     public void EndFrame()
     {
         // SwapBuffers is handled automatically by Silk.NET's IWindow render loop,
@@ -38,6 +55,8 @@ public class Renderer : IDisposable
 
     public void Dispose()
     {
+        _shader.Dispose();
+        _buffering.Dispose();
         _gl.Dispose();
     }
 }

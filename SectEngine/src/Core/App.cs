@@ -56,7 +56,7 @@ public class App : IDisposable
         _renderer.BeginFrame();
         
         // Draw scene objects here in the future:
-        // _renderer.DrawQuad(...);
+        _renderer.Draw();
 
         _renderer.EndFrame();
     }
