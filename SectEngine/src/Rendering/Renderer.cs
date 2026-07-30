@@ -1,43 +1,43 @@
 using System.Drawing;
-using Silk.NET.Maths;
-using Silk.NET.Windowing;
 using Silk.NET.OpenGL;
+using Silk.NET.Windowing;
+
 namespace SectEngine.Rendering;
 
-public class Renderer
+public class Renderer : IDisposable
 {
-    private static IWindow _window;
-    private static GL _gl;
+    private readonly GL _gl;
 
-    private static void OnLoad()
+    public Renderer(IWindow window)
     {
-        Console.WriteLine("Loading...");
-        _gl = _window.CreateOpenGL();
-        _gl.ClearColor(Color.CornflowerBlue);
+        // Native GL context binding
+        _gl = window.CreateOpenGL();
         
+        // Default pipeline setup
+        _gl.ClearColor(Color.CornflowerBlue);
+        _gl.Enable(EnableCap.DepthTest);
+        _gl.Enable(EnableCap.Blend);
+        _gl.BlendFunc(BlendingFactor.SrcAlpha, BlendingFactor.OneMinusSrcAlpha);
     }
 
-    private static void OnUpdate(double deltaTime) {}
-
-    private static void OnRender(double deltaTime)
+    public void SetViewport(int x, int y, int width, int height)
     {
-        _gl.Clear(ClearBufferMask.ColorBufferBit);
+        _gl.Viewport(x, y, (uint)width, (uint)height);
     }
 
-    public static void Main(string[] args)
+    public void BeginFrame()
     {
-        WindowOptions options = WindowOptions.Default with
-        {
-            Size = new Vector2D<int>(800, 600),
-            Title = "Cultivation"
-        };
+        _gl.Clear(ClearBufferMask.ColorBufferBit | ClearBufferMask.DepthBufferBit);
+    }
 
-        _window = Window.Create(options);
+    public void EndFrame()
+    {
+        // SwapBuffers is handled automatically by Silk.NET's IWindow render loop,
+        // but batch rendering flushing or debug metrics can happen here.
+    }
 
-        _window.Load += OnLoad;
-        _window.Update += OnUpdate;
-        _window.Render += OnRender;
-
-        _window.Run();
+    public void Dispose()
+    {
+        _gl.Dispose();
     }
 }
